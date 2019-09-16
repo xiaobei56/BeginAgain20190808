@@ -1,3 +1,14 @@
+## int long char
+
+> int 32位 4个字节 范围： ox8000_0000 ~ ox7FFF_FFFF
+> byte 1字节
+> boolean 1字节
+> short 2字节
+> char 2字节
+> int 4字节
+> float 4字节
+> long 8字节
+> double 8字节 
 ##Stack和Heap的区别 [链接](https://www.cnblogs.com/songanwei/p/9386418.html)
 
 > 要点：**堆**，队列优先,先进先出（FIFO—first in first out）。
@@ -58,4 +69,91 @@ Java中变量在内存中的分配：
 >　4.全局代码区：保存所有的方法定义。
 
 ##[Java虚拟机（JVM）你只要看这一篇就够了！](https://blog.csdn.net/qq_41701956/article/details/81664921)
+
+
+
+## hash
+
+### ***hash***值不同的数据类型通过不同的hash算法就算出一个短的唯一值
+
+  **String** 的hashCode（）
+	
+	 public int hashCode() {
+        int h = hash;
+        final int len = length();
+        if (h == 0 && len > 0) {
+            for (int i = 0; i < len; i++) {
+                h = 31 * h + charAt(i);
+            }
+            hash = h;
+        }
+        return h;
+    }
+###hashMap
+	put(key，value)方法 返回值为map中key的value值（如果存在则返回已存在的值，并存入新值，不存在返回null）
+
+	Hashtable继承自Dictionary类，而HashMap继承自AbstractMap类
+
+	hashtable 不允许null ，hashmap允许null
+	
+ 1. 存储结构
+	 1. hashmap底层以数组形式进行存储，将key-value对作为数组中的一个元素进行存储
+	 2. key-value都是Map.Entry中的属性其中将key的值进行hash之后进行存储，即每个key都是计算hash值，然后再存储。每个hash值对应一个数组下标，数组下标是根据hash值和数组长度计算得来，
+	 3. 由于不同的key有可能hash值相同，即该位置的数组中的元素出现两个，对于这种情况，hashmap采用链表形式进行存储。（key的hash值相同， key不同）
+	 4. hash碰撞解决：
+		1. 开放地址 当发生地址冲突时，按住某种方法继续谈猜测哈希表中的其他存储单元，知道找到空缺位置为止
+		2. rehash ，使用第二个或第三个  计算地址，直到无冲突，eg：按首字母进行了hash冲突了，则再按照首字母第二位，进行hash寻址。
+		3. ***链地址法（拉链法）*** **hashmap使用的此方法**
+			1. 创建一个链表数组，数组中的每一格就是一个链表。若遇到哈希冲突，则将冲突的值加到链表中即可。
+			2. jdk1.8之后采用数组+链表+红黑树的数据结构
+		4. 红黑树（jdk1.8）当链表长度>8时
+		5. 链表时间复杂度 O(n)  红黑树的时间复杂度 O(logn)
+	
+	 >通过hash(key)%len存储到相对应的数组中，如140%16=12.意味着数组下标相同，并不表示hashCode相同。
+
+     
+	>而且红黑树的优点是对于有序数据的操作不会慢到O(N)的时间复杂度
+
+	
+
+ 2. 默认加载因子 0.75 默认大小16
+ 3. hashmap线程不安全
+	 > 1. 当用在方法内的局部变量时，局部变量属于当前线程级别的变量，其他线程访问不了，所以这时也不存在线程安全的问题了。 
+	 > 2. 当用在单例对象成员变量里的时候， 这时候多个线程过来访问的就是同一个HashMap了，对同一个HashMap操作这时候就存在线程安全的问题了。--**线程不安全**
+	 > 3. hashmap 以 Map.Entry形式存储， Entry 是单项非循环链表
+	 1. --put-addEntry-createEntry都是线程不安全的操作。
+	 2. hashmap扩容时resize() 也是线程不安全的。
+
+ 4. 安全的map
+	 1. HashTable
+		 1. HashTable的put\get方法都是被synchronized关键字修饰，在方法级别阻塞，他们占用**共享资源锁**，
+		 2. SynchronizedMap :HashMap对象进行了包装同步而已，每次对HashMap的操作都要先获取这个mutex的对象锁才能进入
+		 3. ConcurentHashMap-推荐
+			每次对HashMap的操作都要先获取这个mutex的对象锁才能进入
+ 5. 红黑树-是平衡树 ，
+	
+	1. 
+	> 1. ***每个节点不是红色就是黑色***
+	 
+	>2. ***根节点总是黑色的***
+	> 3. ***如果节点是红色，则它的子节点必须是黑色（反之不一定），（也就是说从每个叶子到根的所有路径上不能有两个连续的红色节点）***
+	>4. ***从根节点到叶子节点或者空子节点的每条路径，必须包含相同数目的黑色节点***
+
+	2. 红黑树的自我修正
+		1. 改变颜色
+		2. 左旋
+		3. 右旋
+
+	3. 插入和删除操作时间复杂度要比一般的二叉树要慢（多了常数因子，虽然计算复杂度的时候去掉了）
+	4. 但是红黑谁 查询的时候速度会很快，
+	5. ***优点： 对于有序的数据的操作不会曼岛O(N)的时间复杂度***
+
+	
+
+	
+
+	
+	
+	
+
 
